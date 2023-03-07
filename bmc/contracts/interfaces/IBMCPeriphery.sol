@@ -58,7 +58,7 @@ interface IBMCPeriphery {
         @param _seq Integer ( sequence number of the message from current BMC to the next )
         @param _msg Bytes ( serialized bytes of BTP Message )
     */
-    event Message(string _next, uint256 _seq, bytes _msg);
+    event Message(string indexed _next, uint256 indexed _seq, bytes _msg);
 
     /*
         @notice Get status of BMC.
@@ -79,7 +79,7 @@ interface IBMCPeriphery {
         @param _ecode Integer ( error code )
         @param _emsg  String ( error message )
     */
-    event MessageDropped(string _prev, uint256 _seq, bytes _msg, uint256 _ecode, string _emsg);
+    event MessageDropped(string indexed _prev, uint256 indexed _seq, bytes _msg, uint256 _ecode, string _emsg);
 
     /**
         @notice (EventLog) Logs the event that handle the message
@@ -89,7 +89,7 @@ interface IBMCPeriphery {
         @param _next String ( BTP Address of the BMC to handle the message )
         @param _event String ( Event )
      */
-    event BTPEvent(string _src, int256 _nsn, string _next, string _event);
+    event BTPEvent(string indexed _src, int256 indexed _nsn, string _next, string _event);
 
     /**
        @notice It returns the amount of claimable reward to the target
@@ -127,7 +127,7 @@ interface IBMCPeriphery {
        @param _amount Integer ( Amount of reward to claim )
        @param _nsn  Integer ( Network serial number of the claim message )
     */
-    event ClaimReward(address _sender, string _network, string _receiver, uint256 _amount, int256 _nsn);
+    event ClaimReward(address indexed _sender, string indexed _network, string _receiver, uint256 _amount, int256 _nsn);
 
     /**
        @notice (EventLog) Logs the result of claim at receiving the response or error.
@@ -137,7 +137,7 @@ interface IBMCPeriphery {
        @param _nsn  Integer ( Network serial number of the claim message )
        @param _result Integer ( Result of processing )
     */
-    event ClaimRewardResult(address _sender, string _network, int256 _nsn, uint256 _result);
+    event ClaimRewardResult(address indexed _sender, string indexed _network, int256 _nsn, uint256 _result);
 
     /**
        @notice Gets the fee to the target network

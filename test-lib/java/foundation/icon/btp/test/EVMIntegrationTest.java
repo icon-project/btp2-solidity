@@ -19,6 +19,7 @@ package foundation.icon.btp.test;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Hash;
 import org.web3j.crypto.Keys;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
@@ -74,7 +76,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Tag("integration")
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
 public interface EVMIntegrationTest {
-    Level DEFAULT_LOG_LEVEL = Level.INFO;
+    Level DEFAULT_LOG_LEVEL = Level.DEBUG;
 
     default void clearIfExists(TestInfo testInfo) {
     }
@@ -440,6 +442,10 @@ public interface EVMIntegrationTest {
         } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    static byte[] stringToTopic(String s) {
+        return Hash.sha3(s.getBytes());
     }
 
     interface Faker {

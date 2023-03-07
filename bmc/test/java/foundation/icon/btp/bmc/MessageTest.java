@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.web3j.crypto.Hash;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.math.BigInteger;
@@ -143,9 +144,10 @@ public class MessageTest implements BMCIntegrationTest {
 
     static Consumer<TransactionReceipt> btpEventChecker(
             String src, BigInteger nsn, BTPAddress next, BMCIntegrationTest.Event event) {
+        byte[] srcTopic = EVMIntegrationTest.stringToTopic(src);
         return BMCIntegrationTest.btpEvent(
                 (l) -> assertTrue(l.stream().anyMatch((el) ->
-                        el._src.equals(src) &&
+                        Arrays.equals(el._src, srcTopic) &&
                                 el._nsn.equals(nsn) &&
                                 el._next.equals(next == null ? "" : next.toString()) &&
                                 el._event.equals(event.name())
@@ -165,7 +167,7 @@ public class MessageTest implements BMCIntegrationTest {
         BigInteger txSeq = BMCIntegrationTest.getStatus(next.toString())
                 .getTx_seq();
         Consumer<TransactionReceipt> checker = BMCIntegrationTest.messageEvent((el) -> {
-            assertEquals(next.toString(), el._next);
+            assertArrayEquals(EVMIntegrationTest.stringToTopic(next.toString()), el._next);
             assertEquals(txSeq.add(BigInteger.ONE), el._seq);
             BTPMessage btpMessage = BTPMessage.fromBytes(el._msg);
             assertEquals(btpAddress.net(), btpMessage.getSrc());
@@ -329,7 +331,7 @@ public class MessageTest implements BMCIntegrationTest {
         BigInteger txSeq = BMCIntegrationTest.getStatus(next.toString())
                 .getTx_seq();
         return BMCIntegrationTest.messageEvent((el) -> {
-            assertEquals(next.toString(), el._next);
+            assertArrayEquals(EVMIntegrationTest.stringToTopic(next.toString()), el._next);
             assertEquals(txSeq.add(BigInteger.ONE), el._seq);
             assertEqualsBTPMessage(msg, BTPMessage.fromBytes(el._msg));
         });
@@ -436,7 +438,7 @@ public class MessageTest implements BMCIntegrationTest {
         BigInteger rxSeq = BMCIntegrationTest.getStatus(prev.toString())
                 .getRx_seq();
         return BMCIntegrationTest.messageDroppedEvent((el) -> {
-            assertEquals(prev.toString(), el._prev);
+            assertArrayEquals(EVMIntegrationTest.stringToTopic(prev.toString()), el._prev);
             assertEquals(rxSeq.add(BigInteger.ONE), el._seq);
             assertEqualsBTPMessage(msg, BTPMessage.fromBytes(el._msg));
 //            assertEquals(BigInteger.valueOf(e.getCode()), el._ecode);

@@ -21,9 +21,12 @@ import foundation.icon.btp.lib.BMVStatus;
 import foundation.icon.btp.lib.BTPAddress;
 import foundation.icon.btp.test.BTPIntegrationTest;
 import foundation.icon.btp.test.EVMIntegrationTest;
+import org.bouncycastle.util.encoders.Hex;
+import org.web3j.crypto.Hash;
 import org.web3j.protocol.core.methods.response.BaseEventResponse;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -129,7 +132,11 @@ public interface BMCIntegrationTest extends BTPIntegrationTest {
     String INTERNAL_SERVICE = "bmc";
     enum Internal {Init, Link, Unlink, Claim, Response}
 
-    static List<BMCMessage> bmcMessages(TransactionReceipt txr, Predicate<String> nextPredicate) {
+    static Predicate<byte[]> topicPredicate(String s) {
+        return (v) -> Arrays.equals(EVMIntegrationTest.stringToTopic(s), v);
+    }
+
+    static List<BMCMessage> bmcMessages(TransactionReceipt txr, Predicate<byte[]> nextPredicate) {
         Predicate<BMCPeriphery.MessageEventResponse> filter = (el) ->
                 BTPMessage.fromBytes(el._msg).getSvc().equals(INTERNAL_SERVICE);
         if (nextPredicate != null) {
