@@ -78,7 +78,7 @@ library RLPDecodeStruct {
         RLPDecode.RLPItem[] memory ls = _rlp.toRlpItem().toList();
         return
             Types.MessageEvent(
-                string(ls[0].toBytes()),
+                bytes32(ls[0].toUint()),
                 ls[1].toUint(),
                 ls[2].toBytes()
             );

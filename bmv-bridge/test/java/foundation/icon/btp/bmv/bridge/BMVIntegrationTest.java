@@ -21,6 +21,7 @@ import foundation.icon.btp.test.BTPIntegrationTest;
 import foundation.icon.btp.test.EVMIntegrationTest;
 import foundation.icon.btp.test.MockBMCIntegrationTest;
 import org.junit.jupiter.api.Test;
+import org.web3j.crypto.Hash;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.math.BigInteger;
@@ -46,11 +47,12 @@ public class BMVIntegrationTest implements BTPIntegrationTest {
 
     @Test
     void handleRelayMessage() throws Exception {
+        byte[] next_bmc = Hash.sha3(bmc.toString().getBytes());
         BigInteger seq = BigInteger.ZERO;
         String msg = "testMessage";
 
         EventDataBTPMessage ed = new EventDataBTPMessage(
-                bmc.toString(), seq.add(BigInteger.ONE), msg.getBytes());
+                next_bmc, seq.add(BigInteger.ONE), msg.getBytes());
         BigInteger height = BigInteger.ONE;
         ReceiptProof rp = new ReceiptProof(0, List.of(ed), height);
         RelayMessage rm = new RelayMessage(new ArrayList<>(List.of(rp)));

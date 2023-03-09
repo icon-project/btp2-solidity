@@ -9,7 +9,7 @@ library Types {
     }
 
     struct MessageEvent {
-        string nextBmc;
+        bytes32 nextBmc;
         uint256 seq;
         bytes message;
     }

@@ -21,6 +21,7 @@ import foundation.icon.btp.test.EVMIntegrationTest;
 import foundation.icon.btp.test.LibRLPIntegrationTest;
 import foundation.icon.btp.util.StringUtil;
 import org.junit.jupiter.api.Test;
+import org.web3j.crypto.Hash;
 
 import java.math.BigInteger;
 
@@ -31,7 +32,7 @@ public class LibRLPStructTest implements LibRLPIntegrationTest {
     static LibRLPStruct libRLPStruct = EVMIntegrationTest.deploy(LibRLPStruct.class);
 
     static void assertEqualsMessageEvent(EventDataBTPMessage o1, EventDataBTPMessage o2) {
-        assertEquals(o1.getNext_bmc(), o2.getNext_bmc());
+        assertArrayEquals(o1.getNext_bmc(), o2.getNext_bmc());
         assertEquals(o1.getSeq(), o2.getSeq());
         assertArrayEquals(o1.getMsg(), o2.getMsg());
     }
@@ -46,7 +47,7 @@ public class LibRLPStructTest implements LibRLPIntegrationTest {
     @Test
     void testMessageEvent() throws Exception {
         EventDataBTPMessage expected = new EventDataBTPMessage(
-                BTPIntegrationTest.Faker.btpLink().toString(),
+                Hash.sha3(BTPIntegrationTest.Faker.btpLink().toString().getBytes()),
                 BigInteger.ONE,
                 EVMIntegrationTest.Faker.bytes(1));
 

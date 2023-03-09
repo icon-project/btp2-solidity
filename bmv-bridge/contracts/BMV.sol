@@ -73,6 +73,7 @@ contract BMV is IBMV {
         bytes[] memory
     ) {
         checkAccessible(_bmc, _prev);
+        bytes32 bmc = keccak256(bytes(_bmc));
         Types.RelayMessage memory relayMsg = _msg.decodeRelayMessage();
         Types.ReceiptProof memory rp;
         Types.MessageEvent memory ev;
@@ -87,14 +88,14 @@ contract BMV is IBMV {
             height = rp.height;
             for (uint256 j = 0; j < rp.events.length; j++) {
                 ev = rp.events[j];
+                if (bmc != ev.nextBmc) {
+                    continue;
+                }
                 if (ev.seq < next_seq) {
                     continue;
                     // ignore lower sequence number
                 } else if (ev.seq > next_seq) {
                     revert(Errors.BMV_REVERT_NOT_VERIFIABLE);
-                }
-                if (!ev.nextBmc.compareTo(_bmc)) {
-                    continue;
                 }
                 msgs.push(ev.message);
                 next_seq++;
