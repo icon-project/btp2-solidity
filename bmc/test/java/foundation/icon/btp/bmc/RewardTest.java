@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RewardTest implements BMCIntegrationTest {
@@ -138,7 +139,7 @@ public class RewardTest implements BMCIntegrationTest {
         return BMCIntegrationTest.claimRewardEvent(
                 (el) -> {
                     assertEquals(sender, el._sender);
-                    assertEquals(net, el._network);
+                    assertArrayEquals(EVMIntegrationTest.stringToTopic(net), el._network);
                     assertEquals(receiver, el._receiver);
                     assertEquals(amount, el._amount);
                     assertEquals(nsn, el._nsn);
@@ -150,7 +151,7 @@ public class RewardTest implements BMCIntegrationTest {
         return BMCIntegrationTest.claimRewardResultEvent(
                 (el) -> {
                     assertEquals(nsn, el._nsn);
-                    assertEquals(net, el._network);
+                    assertArrayEquals(EVMIntegrationTest.stringToTopic(net), el._network);
                     assertEquals(result, el._result);
                 });
     }

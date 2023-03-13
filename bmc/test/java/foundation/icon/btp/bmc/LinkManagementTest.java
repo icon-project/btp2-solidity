@@ -19,10 +19,12 @@ package foundation.icon.btp.bmc;
 import foundation.icon.btp.lib.BTPAddress;
 import foundation.icon.btp.test.EVMIntegrationTest;
 import foundation.icon.btp.test.MockBMVIntegrationTest;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.web3j.crypto.Hash;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.util.ArrayList;
@@ -91,7 +93,7 @@ public class LinkManagementTest implements BMCIntegrationTest {
         List<String> links = getLinks();
         Consumer<TransactionReceipt> checker = (txr) -> {
             initMessageChecker(links)
-                    .accept(BMCIntegrationTest.bmcMessages(txr, (next) -> next.equals(link)));
+                    .accept(BMCIntegrationTest.bmcMessages(txr, BMCIntegrationTest.topicPredicate(link)));
         };
         try {
             checker.accept(bmcManagement.addLink(link).send());
@@ -203,10 +205,10 @@ public class LinkManagementTest implements BMCIntegrationTest {
 
         Consumer<TransactionReceipt> linkMessageCheck = (txr) -> {
             initMessageChecker(links)
-                    .accept(BMCIntegrationTest.bmcMessages(txr, (next) -> next.equals(secondLink)));
-            List<String> copy = new ArrayList<>(links);
+                    .accept(BMCIntegrationTest.bmcMessages(txr, BMCIntegrationTest.topicPredicate(secondLink)));
+            List<String> copy = links.stream().map((v) -> Hex.toHexString(EVMIntegrationTest.stringToTopic(v))).collect(Collectors.toList());
             linkMessageChecker(secondLink, links.size())
-                    .accept(BMCIntegrationTest.bmcMessages(txr, copy::remove));
+                    .accept(BMCIntegrationTest.bmcMessages(txr, (v) -> copy.remove(Hex.toHexString(v))));
             assertEquals(0, copy.size());
         };
         try {
@@ -218,9 +220,9 @@ public class LinkManagementTest implements BMCIntegrationTest {
 
         //RemoveLinkShouldSendUnlinkMessage
         Consumer<TransactionReceipt> unlinkMessageCheck = (txr) -> {
-            List<String> copy = new ArrayList<>(links);
+            List<String> copy = links.stream().map((v) -> Hex.toHexString(EVMIntegrationTest.stringToTopic(v))).collect(Collectors.toList());
             unlinkMessageChecker(secondLink, links.size())
-                    .accept(BMCIntegrationTest.bmcMessages(txr, copy::remove));
+                    .accept(BMCIntegrationTest.bmcMessages(txr, (v) -> copy.remove(Hex.toHexString(v))));
             assertEquals(0, copy.size());
         };
         try {

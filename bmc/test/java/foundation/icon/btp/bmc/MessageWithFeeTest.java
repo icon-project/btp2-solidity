@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.web3j.crypto.Hash;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.math.BigInteger;
@@ -145,7 +146,7 @@ public class MessageWithFeeTest implements BMCIntegrationTest {
         BigInteger txSeq = BMCIntegrationTest.getStatus(next.toString())
                 .getTx_seq();
         Consumer<TransactionReceipt> checker = BMCIntegrationTest.messageEvent((el) -> {
-            assertEquals(next.toString(), el._next);
+            assertArrayEquals(EVMIntegrationTest.stringToTopic(next.toString()), el._next);
             assertEquals(txSeq.add(BigInteger.ONE), el._seq);
             BTPMessage btpMessage = BTPMessage.fromBytes(el._msg);
             assertEquals(btpAddress.net(), btpMessage.getSrc());
