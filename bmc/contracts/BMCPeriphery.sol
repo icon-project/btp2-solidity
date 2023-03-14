@@ -204,7 +204,7 @@ contract BMCPeriphery is IBMCPeriphery, ICCPeriphery, Initializable {
     ) internal {
         txSeqMap[next]++;
         emit Message(next, txSeqMap[next], btpMsg.encodeBTPMessage());
-        emitBTPEvent(btpMsg, next, evt);
+        emitBTPEvent(btpMsg, next.networkAddress(), evt);
     }
 
     function _sendError(

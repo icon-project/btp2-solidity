@@ -134,7 +134,7 @@ public class MessageTest implements BMCIntegrationTest {
     }
 
     static Consumer<TransactionReceipt> btpEventChecker(
-            BTPMessage msg, BTPAddress next, BMCIntegrationTest.Event event) {
+            BTPMessage msg, String next, BMCIntegrationTest.Event event) {
         if (msg.getNsn().compareTo(BigInteger.ZERO) > 0) {
             return btpEventChecker(msg.getSrc(), msg.getNsn(), next, event);
         } else {
@@ -144,6 +144,11 @@ public class MessageTest implements BMCIntegrationTest {
 
     static Consumer<TransactionReceipt> btpEventChecker(
             String src, BigInteger nsn, BTPAddress next, BMCIntegrationTest.Event event) {
+        return btpEventChecker(src, nsn, next == null ? null : next.net(), event);
+    }
+
+    static Consumer<TransactionReceipt> btpEventChecker(
+            String src, BigInteger nsn, String next, BMCIntegrationTest.Event event) {
         byte[] srcTopic = EVMIntegrationTest.stringToTopic(src);
         return BMCIntegrationTest.btpEvent(
                 (l) -> assertTrue(l.stream().anyMatch((el) ->
@@ -340,7 +345,7 @@ public class MessageTest implements BMCIntegrationTest {
     static Consumer<TransactionReceipt> routeChecker(
             final BTPAddress next, final BTPMessage msg) {
         return routeChecker(next, msg, (v) -> v).andThen(
-                btpEventChecker(msg, next, BMCIntegrationTest.Event.ROUTE));
+                btpEventChecker(msg, next.net(), BMCIntegrationTest.Event.ROUTE));
     }
 
     static Consumer<TransactionReceipt> routeChecker(
