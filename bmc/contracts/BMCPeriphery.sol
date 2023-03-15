@@ -110,7 +110,7 @@ contract BMCPeriphery is IBMCPeriphery, ICCPeriphery, Initializable {
             if (btpMsg.dst.compareTo(network)) {
                 (uint256 ecode, string memory emsg) = handleMessage(_prev, btpMsg);
                 if (ecode == Types.ECODE_NONE) {
-                    emitBTPEvent(btpMsg, "", Types.BTP_EVENT_RECEIVE);
+                    emitBTPEvent(btpMsg, btpMsg.sn > 0 ? btpMsg.src: "", Types.BTP_EVENT_RECEIVE);
                 } else {
                     //rollback
                     if (btpMsg.sn > 0) {
@@ -204,7 +204,7 @@ contract BMCPeriphery is IBMCPeriphery, ICCPeriphery, Initializable {
     ) internal {
         txSeqMap[next]++;
         emit Message(next, txSeqMap[next], btpMsg.encodeBTPMessage());
-        emitBTPEvent(btpMsg, next, evt);
+        emitBTPEvent(btpMsg, next.networkAddress(), evt);
     }
 
     function _sendError(
