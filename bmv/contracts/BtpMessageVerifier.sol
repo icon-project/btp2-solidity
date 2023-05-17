@@ -94,11 +94,11 @@ contract BtpMessageVerifier is IBMV {
 
         for (uint256 i = 0; i < rms.length; i++) {
             if (rms[i].typ == RelayMessageLib.TYPE_BLOCK_UPDATE) {
-                require(remainMessageCount == 0, Errors.ERR_UNKNOWN);
+                require(remainMessageCount == 0, string.concat(Errors.ERR_UNKNOWN, ":UnexpectedBlockUpdate"));
                 (Header memory header, Proof memory proof) = rms[i].toBlockUpdate();
 
-                require(networkId == header.networkId, Errors.ERR_UNKNOWN);
-                require(_db.networkSectionHash == header.prevNetworkSectionHash, Errors.ERR_UNKNOWN);
+                require(networkId == header.networkId, string.concat(Errors.ERR_UNKNOWN, ":InvalidNID"));
+                require(_db.networkSectionHash == header.prevNetworkSectionHash, string.concat(Errors.ERR_UNKNOWN, ":InvalidNSH"));
                 checkMessageSn(_db.nextMessageSn, header.messageSn);
                 checkBlockProof(header, proof, _db.validators);
 
@@ -117,7 +117,7 @@ contract BtpMessageVerifier is IBMV {
             } else if (rms[i].typ == RelayMessageLib.TYPE_MESSAGE_PROOF) {
                 MessageProof memory mp = rms[i].toMessageProof();
                 (bytes32 root, uint256 leafCount) = mp.calculate();
-                require(root == _db.messageRoot && leafCount == _db.messageCount, Errors.ERR_UNKNOWN);
+                require(root == _db.messageRoot && leafCount == _db.messageCount, string.concat(Errors.ERR_UNKNOWN, ":InvalidMessageProof"));
                 messages = Utils.append(messages, mp.mesgs);
                 remainMessageCount -= mp.mesgs.length;
                 _db.nextMessageSn += mp.mesgs.length;
@@ -197,11 +197,10 @@ contract BtpMessageVerifier is IBMV {
         uint256 votes = 0;
         bytes32 decision = header.getNetworkTypeSectionDecisionHash(srcNetworkId, networkTypeId);
         for (uint256 i = 0; i < proof.signatures.length && !hasQuorumOf(validators.length, votes); i++) {
-            address signer = Utils.recoverSigner(decision, proof.signatures[i]);
-            if (signer == validators[i]) {
+            if (Utils.recoverSigner(decision, proof.signatures[i]) == validators[i]) {
                 votes++;
             }
         }
-        require(hasQuorumOf(validators.length, votes), Errors.ERR_UNKNOWN);
+        require(hasQuorumOf(validators.length, votes), string.concat(Errors.ERR_UNKNOWN, ":LackQuorum"));
     }
 }
