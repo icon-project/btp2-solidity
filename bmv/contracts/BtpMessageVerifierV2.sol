@@ -8,7 +8,7 @@ import "./libraries/RLPEncode.sol";
 import "./libraries/RelayMessageLib.sol";
 import "./libraries/Utils.sol";
 
-contract BtpMessageVerifier is IBMV {
+contract BtpMessageVerifierV2 is IBMV {
     using BlockUpdateLib for Header;
     using MessageProofLib for MessageProof;
     using RelayMessageLib for RelayMessage;
@@ -46,30 +46,35 @@ contract BtpMessageVerifier is IBMV {
         _;
     }
 
+    // @dev wrap integer variables to avoid stack too deep error
     constructor(
         address _bmc,
         string memory _srcNetworkId,
-        uint256 _networkTypeId,
-        bytes memory _firstBlockHeader,
-        uint256 _sequenceOffset
+        bytes32 _networkSectionHash,
+        bytes32 _messageRoot,
+        uint256[7] memory _integers,
+        // uint256 _networkTypeId,
+        // uint256 _sequenceOffset,
+        // uint256 _networkId,
+        // uint256 _height,
+        // uint256 _messageCount,
+        // uint256 _firstMessageSn,
+        // uint256 _nextMessageSn,
+        address[] memory _validators
     ) {
         bmc = _bmc;
         srcNetworkId = _srcNetworkId;
-        networkTypeId = _networkTypeId;
-        sequenceOffset = _sequenceOffset;
-
-        Header memory header = BlockUpdateLib.decodeHeader(_firstBlockHeader);
-        require(header.nextValidators.length > 0, Errors.ERR_UNKNOWN);
-
-        networkId = header.networkId;
+        networkTypeId = _integers[0];
+        sequenceOffset = _integers[1];
+        networkId = _integers[2];
         db = StateDB(
-            header.getNetworkSectionHash(),
-            header.messageRoot,
-            header.mainHeight,
-            header.messageCount,
-            header.messageSn,
-            header.messageSn,
-            header.nextValidators
+            _networkSectionHash,
+            _messageRoot,
+            _integers[3],
+            _integers[4],
+            _integers[5],
+            _integers[6],
+            _validators
         );
     }
 

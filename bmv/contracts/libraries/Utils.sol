@@ -2,7 +2,10 @@
 pragma solidity ^0.8.12;
 
 library Utils {
-    function recoverSigner(bytes32 message, bytes memory signature) internal pure returns (address signer) {
+    function recoverSigner(bytes32 message, bytes memory signature) internal pure returns (address) {
+        if (signature.length != 65) {
+            return address(0);
+        }
         (bytes32 r, bytes32 s, uint8 v) = splitSignature(signature);
         return ecrecover(message, v + 27, r, s);
     }
