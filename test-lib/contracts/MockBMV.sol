@@ -2,10 +2,10 @@
 pragma solidity >=0.8.0;
 pragma abicoder v2;
 
+import "@iconfoundation/btp2-solidity-library/contracts/RLPEncode.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/RLPDecode.sol";
 import "./interfaces/IBMV.sol";
 import "./interfaces/IMockBMV.sol";
-import "./libraries/RLPEncode.sol";
-import "./libraries/RLPDecode.sol";
 import "./libraries/Integers.sol";
 import "./libraries/Strings.sol";
 

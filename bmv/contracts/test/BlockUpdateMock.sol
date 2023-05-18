@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.12;
 
+import "@iconfoundation/btp2-solidity-library/contracts/RLPEncode.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/RLPDecode.sol";
 import "../libraries/MerkleTreeLib.sol";
 import "../libraries/BlockUpdateLib.sol";
-import "../libraries/RLPDecode.sol";
-import "../libraries/RLPEncode.sol";
 
 contract BlockUpdateMock {
     using BlockUpdateLib for Header;

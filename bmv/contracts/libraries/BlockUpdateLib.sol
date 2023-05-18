@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.12;
 
+import "@iconfoundation/btp2-solidity-library/contracts/RLPEncode.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/RLPDecode.sol";
 import {Path, MerkleTreeLib} from "./MerkleTreeLib.sol";
-import "./RLPEncode.sol";
-import "./RLPDecode.sol";
 
 struct Header {
     uint256 mainHeight;

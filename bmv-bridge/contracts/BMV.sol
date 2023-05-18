@@ -2,6 +2,8 @@
 pragma solidity >=0.8.0;
 pragma abicoder v2;
 
+import "@iconfoundation/btp2-solidity-library/contracts/RLPEncode.sol";
+
 import "./interfaces/IBMV.sol";
 
 import "./libraries/Strings.sol";
@@ -10,7 +12,6 @@ import "./libraries/BTPAddress.sol";
 import "./libraries/Types.sol";
 import "./libraries/Errors.sol";
 import "./libraries/RLPDecodeStruct.sol";
-import "./libraries/RLPEncode.sol";
 
 contract BMV is IBMV {
     using BTPAddress for string;

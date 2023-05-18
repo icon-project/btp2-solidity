@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.12;
 
+import "@iconfoundation/btp2-solidity-library/contracts/RLPDecode.sol";
 import {Header, Proof, BlockUpdateLib} from "./BlockUpdateLib.sol";
 import {MessageProof, MessageProofLib} from "./MessageProofLib.sol";
-import "./RLPDecode.sol";
 
 struct RelayMessage {
     uint256 typ;
