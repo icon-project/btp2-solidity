@@ -2,13 +2,13 @@
 pragma solidity >=0.8.0;
 pragma abicoder v2;
 
+import "@iconfoundation/btp2-solidity-library/contracts/utils/BTPAddress.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/utils/ParseAddress.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/utils/Strings.sol";
 import "@iconfoundation/btp2-solidity-library/contracts/utils/RLPEncode.sol";
 
 import "./interfaces/IBMV.sol";
 
-import "./libraries/Strings.sol";
-import "./libraries/ParseAddress.sol";
-import "./libraries/BTPAddress.sol";
 import "./libraries/Types.sol";
 import "./libraries/Errors.sol";
 import "./libraries/RLPDecodeStruct.sol";

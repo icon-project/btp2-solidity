@@ -7,14 +7,14 @@ import "./interfaces/IBSH.sol";
 import "./interfaces/ICallService.sol";
 import "./interfaces/ICallServiceReceiver.sol";
 import "./interfaces/IFeeManage.sol";
-import "./libraries/BTPAddress.sol";
-import "./libraries/Strings.sol";
-import "./libraries/Integers.sol";
-import "./libraries/ParseAddress.sol";
 import "./libraries/Types.sol";
 import "./libraries/RLPEncodeStruct.sol";
 import "./libraries/RLPDecodeStruct.sol";
 
+import "@iconfoundation/btp2-solidity-library/contracts/utils/BTPAddress.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/utils/Integers.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/utils/ParseAddress.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 contract CallService is IBSH, ICallService, IFeeManage, Initializable {

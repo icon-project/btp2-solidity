@@ -26,5 +26,5 @@
     "typechain": "^8.1.0",
     "typescript": ">=4.5.0"
   },
-  "files": [ "contracts/*.sol" ]
+  "files": [ "contracts/utils/**/*.sol" ]
 }

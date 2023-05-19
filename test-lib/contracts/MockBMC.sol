@@ -5,11 +5,12 @@ import "./interfaces/IBMC.sol";
 import "./interfaces/IMockBMC.sol";
 import "./interfaces/IBMV.sol";
 import "./interfaces/IBSH.sol";
-import "./libraries/ParseAddress.sol";
-import "./libraries/BTPAddress.sol";
-import "./libraries/Integers.sol";
-import "./libraries/Strings.sol";
 import "./libraries/Errors.sol";
+
+import "@iconfoundation/btp2-solidity-library/contracts/utils/BTPAddress.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/utils/Integers.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/utils/ParseAddress.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/utils/Strings.sol";
 
 contract MockBMC is IBMC, IMockBMC {
     using ParseAddress for address;

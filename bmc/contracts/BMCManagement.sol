@@ -10,11 +10,11 @@ import "./interfaces/ICCPeriphery.sol";
 import "./interfaces/ICCService.sol";
 import "./libraries/Types.sol";
 import "./libraries/Errors.sol";
-import "./libraries/BTPAddress.sol";
-import "./libraries/Strings.sol";
 import "./libraries/RLPEncodeStruct.sol";
 import "./libraries/Utils.sol";
 
+import "@iconfoundation/btp2-solidity-library/contracts/utils/BTPAddress.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 contract BMCManagement is IBMCManagement, IOwnerManager, ICCManagement, Initializable {

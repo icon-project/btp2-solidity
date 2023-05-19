@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity >=0.8.0;
 
-import "./Strings.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/utils/Strings.sol";
 
 library Utils {
     using Strings for string;
