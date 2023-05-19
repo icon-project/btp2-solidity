@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.12;
 
-import "../RLPDecode.sol";
-import "../RLPEncode.sol";
+import "../utils/RLPDecode.sol";
+import "../utils/RLPEncode.sol";
 
 contract RLPCodecMock {
     using RLPDecode for bytes;
