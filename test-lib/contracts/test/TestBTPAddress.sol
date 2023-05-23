@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 pragma abicoder v2;
 
-import "../libraries/BTPAddress.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/utils/BTPAddress.sol";
 
 contract TestBTPAddress {
     using BTPAddress for string;

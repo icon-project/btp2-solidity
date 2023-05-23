@@ -215,10 +215,21 @@ library RLPDecode {
     }
 
     function toInt(RLPItem memory item) internal pure returns (int256) {
-        if ((toBytes(item)[0] & 0x80) == 0x80) {
-            return int256(toUint(item)) - int256(2**(toBytes(item).length * 8));
+        require(item.len >= 0 && item.len < 33, "Invalid int number");
+
+        uint256 offset = _payloadOffset(item.memPtr);
+        uint256 len = item.len - offset;
+
+        int256 result;
+        uint256 memPtr = item.memPtr + offset;
+        assembly {
+            result := mload(memPtr)
+            if lt(len, 32) {
+                result := sar(mul(8, sub(32, len)), result)
+            }
         }
-        return int256(toUint(item));
+
+        return result;
     }
 
     // enforces 32 byte length
