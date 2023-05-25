@@ -466,6 +466,16 @@ contract BMCPeriphery is IBMCPeriphery, ICCPeriphery, Initializable {
         return ICCService(bmcService).removeResponse(_to, _svc, _sn);
     }
 
+    function getBMCManagement(
+    ) external view returns (address) {
+        return bmcManagement;
+    }
+
+    function getBMCService(
+    ) external view returns (address) {
+        return bmcService;
+    }
+
     function getServices(
     ) external view returns (
         Types.Service[] memory
