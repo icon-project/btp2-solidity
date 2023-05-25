@@ -17,7 +17,7 @@ contract BtpMessageVerifier is IBMV {
     address private immutable bmc;
     uint256 private immutable networkTypeId;
     uint256 private immutable networkId;
-    uint256 private immutable sequenceOffset;
+    int256 private immutable sequenceOffset;
     string private srcNetworkId;
     StateDB private db;
 
@@ -51,7 +51,7 @@ contract BtpMessageVerifier is IBMV {
         string memory _srcNetworkId,
         uint256 _networkTypeId,
         bytes memory _firstBlockHeader,
-        uint256 _sequenceOffset
+        int256 _sequenceOffset
     ) {
         bmc = _bmc;
         srcNetworkId = _srcNetworkId;
@@ -75,7 +75,7 @@ contract BtpMessageVerifier is IBMV {
 
     function getStatus() external view returns (IBMV.VerifierStatus memory) {
         bytes[] memory extra = new bytes[](3);
-        extra[0] = RLPEncode.encodeUint(sequenceOffset);
+        extra[0] = RLPEncode.encodeInt(sequenceOffset);
         extra[1] = RLPEncode.encodeUint(db.firstMessageSn);
         extra[2] = RLPEncode.encodeUint(db.messageCount);
         return IBMV.VerifierStatus(db.height, RLPEncode.encodeList(extra));
@@ -88,7 +88,7 @@ contract BtpMessageVerifier is IBMV {
         bytes memory _msg
     ) external onlyBmc onlyBtpNetwork(_prev) returns (bytes[] memory messages) {
         StateDB memory _db = db;
-        require(_db.nextMessageSn == _sn - sequenceOffset, Errors.ERR_INVALID_ARGS);
+        require(_db.nextMessageSn == uint256(int256(_sn) - sequenceOffset), Errors.ERR_INVALID_ARGS);
         uint256 remainMessageCount = _db.messageCount - (_db.nextMessageSn - _db.firstMessageSn);
         RelayMessage[] memory rms = RelayMessageLib.decode(_msg);
 
