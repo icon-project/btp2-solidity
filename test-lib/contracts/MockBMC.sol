@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity >=0.8.0;
+pragma abicoder v2;
 
-import "./interfaces/IBMC.sol";
 import "./interfaces/IMockBMC.sol";
-import "./interfaces/IBMV.sol";
-import "./interfaces/IBSH.sol";
 import "./libraries/Errors.sol";
 
+import "@iconfoundation/btp2-solidity-library/contracts/interfaces/IBMC.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/interfaces/IBMV.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/interfaces/IBSH.sol";
 import "@iconfoundation/btp2-solidity-library/contracts/utils/BTPAddress.sol";
 import "@iconfoundation/btp2-solidity-library/contracts/utils/Integers.sol";
 import "@iconfoundation/btp2-solidity-library/contracts/utils/ParseAddress.sol";
