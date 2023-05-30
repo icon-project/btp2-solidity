@@ -12,14 +12,8 @@ module.exports = {
     },
     skipFiles: [
         // "BMV.sol",
-        "interfaces/IBMV.sol",
-        // "libraries/BTPAddress.sol",
         // "libraries/Errors.sol",
-        // "libraries/ParseAddress.sol",
-        // "libraries/RLPDecode.sol",
         // "libraries/RLPDecodeStruct.sol",
-        // "libraries/RLPEncode.sol",
-        // "libraries/Strings.sol",
         // "libraries/Types.sol",
         "test/LibRLPStruct.sol"
     ],
