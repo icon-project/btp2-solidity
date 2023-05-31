@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.12;
 
+import "@iconfoundation/btp2-solidity-library/contracts/interfaces/IBMV.sol";
 import "@iconfoundation/btp2-solidity-library/contracts/utils/RLPEncode.sol";
-import "./interfaces/IBMV.sol";
 import "./libraries/Errors.sol";
-import "./libraries/String.sol";
 import "./libraries/RelayMessageLib.sol";
+import "./libraries/String.sol";
 import "./libraries/Utils.sol";
 
 contract BtpMessageVerifier is IBMV {

@@ -2,9 +2,10 @@
 pragma solidity >=0.8.0;
 pragma abicoder v2;
 
-import "./interfaces/IBMC.sol";
-import "./interfaces/IBSH.sol";
 import "./interfaces/IMockBSH.sol";
+
+import "@iconfoundation/btp2-solidity-library/contracts/interfaces/IBMC.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/interfaces/IBSH.sol";
 
 contract MockBSH is IBSH, IMockBSH {
     constructor() {}

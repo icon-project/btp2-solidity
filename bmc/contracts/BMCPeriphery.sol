@@ -2,17 +2,17 @@
 pragma solidity >=0.8.0;
 pragma abicoder v2;
 
-import "./interfaces/IBMCPeriphery.sol";
-import "./interfaces/ICCPeriphery.sol";
 import "./interfaces/IBMCManagement.sol";
-import "./interfaces/IBSH.sol";
-import "./interfaces/IBMV.sol";
+import "./interfaces/IBMCPeriphery.sol";
 import "./interfaces/ICCManagement.sol";
+import "./interfaces/ICCPeriphery.sol";
 import "./interfaces/ICCService.sol";
-import "./libraries/Types.sol";
 import "./libraries/Errors.sol";
 import "./libraries/RLPEncodeStruct.sol";
+import "./libraries/Types.sol";
 
+import "@iconfoundation/btp2-solidity-library/contracts/interfaces/IBMV.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/interfaces/IBSH.sol";
 import "@iconfoundation/btp2-solidity-library/contracts/utils/BTPAddress.sol";
 import "@iconfoundation/btp2-solidity-library/contracts/utils/ParseAddress.sol";
 import "@iconfoundation/btp2-solidity-library/contracts/utils/Strings.sol";

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity >=0.8.0;
 
-import "../interfaces/IBMV.sol";
+import "@iconfoundation/btp2-solidity-library/contracts/interfaces/IBMV.sol";
 
 library Types {
     string internal constant BMC_SERVICE = "bmc";
