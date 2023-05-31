@@ -1,8 +1,8 @@
 {
   "name": "@iconfoundation/btp2-solidity-library",
   "version": "0.1.0",
-  "description": "BTP Library for solidity",
-  "author": "MoonKyu Song<mksong@parametacorp.com>",
+  "description": "BTP2 Library for solidity",
+  "author": "MoonKyu Song <mksong@parametacorp.com>",
   "license": "MIT",
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",
@@ -26,5 +26,8 @@
     "typechain": "^8.1.0",
     "typescript": ">=4.5.0"
   },
-  "files": [ "contracts/utils/**/*.sol" ]
+  "files": [
+    "contracts/interfaces/**/*.sol",
+    "contracts/utils/**/*.sol"
+  ]
 }
