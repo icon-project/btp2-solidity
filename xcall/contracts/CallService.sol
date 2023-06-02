@@ -148,10 +148,13 @@ contract CallService is IBSH, ICallService, IFeeManage, Initializable {
     }
 
     function executeCall(
-        uint256 _reqId
+        uint256 _reqId,
+        bytes memory _data
     ) external override {
         Types.CSMessageRequest memory msgReq = proxyReqs[_reqId];
         require(bytes(msgReq.from).length > 0, "InvalidRequestId");
+        bytes32 storedHash = abi.decode(msgReq.data, (bytes32));
+        require(storedHash == keccak256(_data), "DataHashMismatch");
         // cleanup
         delete proxyReqs[_reqId];
 
@@ -162,7 +165,7 @@ contract CallService is IBSH, ICallService, IFeeManage, Initializable {
             address(0),
             msgReq.to,
             msgReq.from,
-            msgReq.data
+            _data
         ) {
             msgRes = Types.CSMessageResponse(msgReq.sn, Types.CS_RESP_SUCCESS, "");
         } catch Error(string memory reason) {
@@ -294,9 +297,9 @@ contract CallService is IBSH, ICallService, IFeeManage, Initializable {
             req.to,
             req.sn,
             req.rollback,
-            req.data
+            abi.encode(keccak256(req.data))
         );
-        emit CallMessage(from, req.to, req.sn, reqId);
+        emit CallMessage(from, req.to, req.sn, reqId, req.data);
     }
 
     function handleResponse(
