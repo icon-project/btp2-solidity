@@ -163,6 +163,12 @@ public class CallServiceTest implements CSIntegrationTest {
     void executeCallWithoutSuccessResponse() throws Exception {
         var from = new BTPAddress(linkNet, sampleAddress);
         byte[] data = requestMap.get(srcSn).getData();
+
+        // should fail if data is not the expected one
+        AssertTransactionException.assertRevertReason("DataHashMismatch", () ->
+                callService.executeCall(reqId, "fakeData".getBytes()).send()
+        );
+
         var checker = CSIntegrationTest.messageReceivedEvent((el) -> {
             assertEquals(from.toString(), el._from);
             assertArrayEquals(data, el._data);
