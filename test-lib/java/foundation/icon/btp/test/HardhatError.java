@@ -66,7 +66,7 @@ public class HardhatError {
         try {
             HardhatError error = new ObjectMapper().readValue(s, HardhatError.class);
             if (error.message.startsWith(REASON_PREFIX)) {
-                reason = error.message.substring(REASON_PREFIX.length(), error.message.length()-2);
+                reason = error.message.substring(REASON_PREFIX.length(), error.message.length()-1);
             } else {
                 System.out.println("does not start with prefix:"+error.message);
                 reason = error.message;

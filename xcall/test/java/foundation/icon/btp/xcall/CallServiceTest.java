@@ -150,6 +150,7 @@ public class CallServiceTest implements CSIntegrationTest {
             assertEquals(Hash.sha3String(sampleAddress), StringUtil.bytesToHex(el._to));
             assertEquals(srcSn, el._sn);
             assertEquals(reqId, el._reqId);
+            assertArrayEquals(data, el._data);
         });
         checker.accept(MockBMCIntegrationTest.mockBMC.handleBTPMessage(
                 csAddress,
@@ -161,15 +162,22 @@ public class CallServiceTest implements CSIntegrationTest {
     @Test
     void executeCallWithoutSuccessResponse() throws Exception {
         var from = new BTPAddress(linkNet, sampleAddress);
+        byte[] data = requestMap.get(srcSn).getData();
+
+        // should fail if data is not the expected one
+        AssertTransactionException.assertRevertReason("DataHashMismatch", () ->
+                callService.executeCall(reqId, "fakeData".getBytes()).send()
+        );
+
         var checker = CSIntegrationTest.messageReceivedEvent((el) -> {
             assertEquals(from.toString(), el._from);
-            assertArrayEquals(requestMap.get(srcSn).getData(), el._data);
+            assertArrayEquals(data, el._data);
         }).andThen(CSIntegrationTest.callExecutedEvent((el) -> {
             assertEquals(reqId, el._reqId);
             assertEquals(BigInteger.ZERO, el._code);
             assertEquals("", el._msg);
         })).andThen(MockBMCIntegrationTest.sendMessageEventShouldNotExists());
-        checker.accept(callService.executeCall(reqId).send());
+        checker.accept(callService.executeCall(reqId, data).send());
     }
 
     @Order(3)
@@ -336,7 +344,7 @@ public class CallServiceTest implements CSIntegrationTest {
             assertEquals(CSMessageResponse.FAILURE, el._code.intValue());
             assertEquals(response.getMsg(), el._msg);
         }));
-        checker.accept(callService.executeCall(reqId).send());
+        checker.accept(callService.executeCall(reqId, data).send());
     }
 
     @Order(12)
