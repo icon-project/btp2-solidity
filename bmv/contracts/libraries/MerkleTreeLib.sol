@@ -10,6 +10,7 @@ library MerkleTreeLib {
     function calculate(bytes32 leaf, Path[] memory pathes) internal pure returns (bytes32) {
         bytes32 temp = leaf;
         for (uint256 i = 0; i < pathes.length; i++) {
+            if (pathes[i].hash == 0 && pathes[i].direction == 1) continue;
             temp = pathes[i].direction == 0
                 ? keccak256(bytes.concat(abi.encodePacked(pathes[i].hash), abi.encodePacked(temp)))
                 : keccak256(bytes.concat(abi.encodePacked(temp), abi.encodePacked(pathes[i].hash)));
