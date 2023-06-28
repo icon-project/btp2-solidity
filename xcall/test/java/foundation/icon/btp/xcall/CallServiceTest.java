@@ -97,7 +97,7 @@ public class CallServiceTest implements CSIntegrationTest {
     }
 
     private BigInteger getFee(String net, boolean rollback) throws Exception {
-        return feeManager.getFee(net, rollback).send();
+        return callService.getFee(net, rollback).send();
     }
 
     private void accumulateFee(BigInteger totalFee, BigInteger protocolFee) throws Exception {

@@ -12,8 +12,6 @@ module.exports = {
     },
     skipFiles: [
         // "CallService.sol",
-        "interfaces/ICallService.sol",
-        "interfaces/ICallServiceReceiver.sol",
         "interfaces/IFeeManage.sol",
         // "libraries/RLPDecodeStruct.sol",
         // "libraries/RLPEncodeStruct.sol",

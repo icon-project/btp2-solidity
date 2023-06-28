@@ -40,19 +40,4 @@ interface IFeeManage {
     ) external view returns (
         uint256
     );
-
-    /**
-       @notice Gets the fee for delivering a message to the _net.
-               If the sender is going to provide rollback data, the _rollback param should set as true.
-               The returned fee is the sum of the protocol fee and the relay fee.
-       @param _net (String) The destination network address
-       @param _rollback (Bool) Indicates whether it provides rollback data
-       @return (Integer) the sum of the protocol fee and the relay fee
-     */
-    function getFee(
-        string memory _net,
-        bool _rollback
-    ) external view returns (
-        uint256
-    );
 }
