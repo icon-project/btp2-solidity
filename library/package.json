@@ -1,6 +1,6 @@
 {
   "name": "@iconfoundation/btp2-solidity-library",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "BTP2 Library for solidity",
   "author": "MoonKyu Song <mksong@parametacorp.com>",
   "license": "MIT",
