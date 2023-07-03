@@ -30,6 +30,9 @@ library Types {
     string internal constant BTP_EVENT_RECEIVE = "RECEIVE";
     string internal constant BTP_EVENT_DROP = "DROP";
 
+    int256 internal constant MODE_NORMAL = 0;
+    int256 internal constant MODE_MAINTENANCE = 1;
+
     struct Service {
         string svc;
         address addr;

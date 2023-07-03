@@ -215,4 +215,22 @@ interface IBMCManagement {
         string calldata  _feeNetwork,
         uint256[] memory _feeValues
     ) external;
+
+    /**
+        @notice Sets the mode of BMC
+        @dev Called by the operator to manage the BTP network.
+        @param _mode  Integer ( Mode of BMC, 0: Normal, 1: Maintenance )
+    */
+    function setMode(
+        int256 _mode
+    ) external;
+
+    /**
+        @notice Returns the mode of BMC
+        @return _mode  Integer ( Mode of BMC, 0: Normal, 1: Maintenance )
+    */
+    function getMode(
+    ) external view returns (
+        int256
+    );
 }

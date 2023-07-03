@@ -645,4 +645,18 @@ contract BMCManagement is IBMCManagement, IOwnerManager, ICCManagement, Initiali
     ) {
         return feeMap[_dst].length/2;
     }
+
+    function setMode(
+        int256 _mode
+    ) external override {
+        requireOwnerAccess();
+        ICCPeriphery(bmcPeriphery).setMode(_mode);
+    }
+
+    function getMode(
+    ) external view override returns (
+        int256
+    ){
+        return ICCPeriphery(bmcPeriphery).getMode();
+    }
 }
