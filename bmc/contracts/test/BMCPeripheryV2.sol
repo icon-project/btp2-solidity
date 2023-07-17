@@ -36,6 +36,7 @@ contract BMCPeripheryV2 is IBMCPeriphery, ICCPeriphery, Initializable {
     mapping(string => uint256) private txSeqMap;//net of link = > txSeq
     mapping(string => uint256) private rxSeqMap;//net of link = > rxSeq
     int256 private networkSn;
+    int256 private mode;
 
     function initialize(
         string memory _network,
@@ -58,6 +59,11 @@ contract BMCPeripheryV2 is IBMCPeriphery, ICCPeriphery, Initializable {
         require(msg.sender == bmcService, Errors.BMC_REVERT_UNAUTHORIZED);
     }
 
+    function requireModeNormal(
+    ) internal view {
+        require(mode == Types.MODE_MAINTENANCE, Errors.BMV_REVERT_NOT_NORMAL_MODE);
+    }
+
     //FIXME remove getBtpAddress
     function getBtpAddress(
     ) external view override returns (
@@ -77,24 +83,41 @@ contract BMCPeripheryV2 is IBMCPeriphery, ICCPeriphery, Initializable {
         string calldata _prev,
         bytes calldata _msg
     ) external override {
+        requireModeNormal();
         string memory prevNet = _prev.networkAddress();
         uint256 rxSeq = rxSeqMap[_prev];
 
         // decode and verify relay message
-        bytes[] memory serializedMsgs = IBMV(
-            ICCManagement(bmcManagement).getVerifier(prevNet)
-        ).handleRelayMessage(btpAddress, _prev, rxSeq, _msg);
+        bytes[] memory serializedMsgs;
+        address bmv = ICCManagement(bmcManagement).getVerifier(prevNet);
+        try IBMV(bmv).handleRelayMessage(btpAddress, _prev, rxSeq, _msg) returns (
+            bytes[] memory _ret
+        ) {
+            serializedMsgs = _ret;
+        } catch Error(string memory reason) {
+            revert(reason);
+        } catch (bytes memory) {
+            revert(Errors.BMV_REVERT_UNKNOWN);
+        }
+
         require(ICCManagement(bmcManagement).isLinkRelay(_prev, msg.sender), Errors.BMC_REVERT_UNAUTHORIZED);
         // dispatch BTP Messages
         Types.BTPMessage memory btpMsg;
         for (uint256 i = 0; i < serializedMsgs.length; i++) {
             rxSeq++;
-            btpMsg = ICCService(bmcService).handleFee(
-                msg.sender, serializedMsgs[i]);
+            try ICCService(bmcService).handleFee(msg.sender, serializedMsgs[i]) returns (
+                Types.BTPMessage memory _ret
+            ) {
+                btpMsg = _ret;
+            } catch Error(string memory reason) {
+                revert(reason);
+            } catch (bytes memory) {
+                revert(Errors.BMC_REVERT_ERROR_HANDLE_FEE);
+            }
             if (btpMsg.dst.compareTo(network)) {
                 (uint256 ecode, string memory emsg) = handleMessage(_prev, btpMsg);
                 if (ecode == Types.ECODE_NONE) {
-                    emitBTPEvent(btpMsg, "", Types.BTP_EVENT_RECEIVE);
+                    emitBTPEvent(btpMsg, btpMsg.sn > 0 ? btpMsg.src: "", Types.BTP_EVENT_RECEIVE);
                 } else {
                     //rollback
                     if (btpMsg.sn > 0) {
@@ -188,7 +211,7 @@ contract BMCPeripheryV2 is IBMCPeriphery, ICCPeriphery, Initializable {
     ) internal {
         txSeqMap[next]++;
         emit Message(next, txSeqMap[next], btpMsg.encodeBTPMessage());
-        emitBTPEvent(btpMsg, next, evt);
+        emitBTPEvent(btpMsg, next.networkAddress(), evt);
     }
 
     function _sendError(
@@ -229,6 +252,7 @@ contract BMCPeripheryV2 is IBMCPeriphery, ICCPeriphery, Initializable {
     ) external override payable returns (
         int256
     ) {
+        requireModeNormal();
         if (msg.sender != bmcService) {
             require(ICCManagement(bmcManagement).getService(_svc) == msg.sender, Errors.BMC_REVERT_UNAUTHORIZED);
         }
@@ -355,7 +379,7 @@ contract BMCPeripheryV2 is IBMCPeriphery, ICCPeriphery, Initializable {
         requireBMCManagementAccess();
         _sendMessage(_next,
             Types.BTPMessage(
-                btpAddress,
+                network,
                 _next.networkAddress(),
                 Types.BMC_SERVICE,
                 0,
@@ -417,6 +441,7 @@ contract BMCPeripheryV2 is IBMCPeriphery, ICCPeriphery, Initializable {
         string calldata _network,
         string calldata _receiver
     ) external payable override {
+        requireModeNormal();
         address sender = msg.sender;
         if (sender == IBMCManagement(bmcManagement).getFeeHandler()) {
             sender = address(this);
@@ -452,4 +477,48 @@ contract BMCPeripheryV2 is IBMCPeriphery, ICCPeriphery, Initializable {
         return ICCService(bmcService).removeResponse(_to, _svc, _sn);
     }
 
+    function getBMCManagement(
+    ) external view returns (address) {
+        return bmcManagement;
+    }
+
+    function getBMCService(
+    ) external view returns (address) {
+        return bmcService;
+    }
+
+    function getServices(
+    ) external view returns (
+        Types.Service[] memory
+    ){
+        return IBMCManagement(bmcManagement).getServices();
+    }
+
+    function getRoutes(
+    ) external view returns (
+        Types.Route[] memory
+    ){
+        return IBMCManagement(bmcManagement).getRoutes();
+    }
+
+    function getLinks(
+    ) external view returns (
+        string[] memory
+    ) {
+        return IBMCManagement(bmcManagement).getLinks();
+    }
+
+    function setMode(
+        int256 _mode
+    ) external override {
+        requireBMCManagementAccess();
+        mode = _mode;
+    }
+
+    function getMode(
+    ) external view override returns (
+        int256
+    ){
+        return mode;
+    }
 }

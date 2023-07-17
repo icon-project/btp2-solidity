@@ -36,6 +36,7 @@ contract BMCPeriphery is IBMCPeriphery, ICCPeriphery, Initializable {
     mapping(string => uint256) private txSeqMap;//net of link = > txSeq
     mapping(string => uint256) private rxSeqMap;//net of link = > rxSeq
     int256 private networkSn;
+    int256 private mode;
 
     function initialize(
         string memory _network,
@@ -58,6 +59,11 @@ contract BMCPeriphery is IBMCPeriphery, ICCPeriphery, Initializable {
         require(msg.sender == bmcService, Errors.BMC_REVERT_UNAUTHORIZED);
     }
 
+    function requireModeNormal(
+    ) internal view {
+        require(mode == Types.MODE_NORMAL, Errors.BMV_REVERT_NOT_NORMAL_MODE);
+    }
+
     //FIXME remove getBtpAddress
     function getBtpAddress(
     ) external view override returns (
@@ -77,6 +83,7 @@ contract BMCPeriphery is IBMCPeriphery, ICCPeriphery, Initializable {
         string calldata _prev,
         bytes calldata _msg
     ) external override {
+        requireModeNormal();
         string memory prevNet = _prev.networkAddress();
         uint256 rxSeq = rxSeqMap[_prev];
 
@@ -245,6 +252,7 @@ contract BMCPeriphery is IBMCPeriphery, ICCPeriphery, Initializable {
     ) external override payable returns (
         int256
     ) {
+        requireModeNormal();
         if (msg.sender != bmcService) {
             require(ICCManagement(bmcManagement).getService(_svc) == msg.sender, Errors.BMC_REVERT_UNAUTHORIZED);
         }
@@ -431,6 +439,7 @@ contract BMCPeriphery is IBMCPeriphery, ICCPeriphery, Initializable {
         string calldata _network,
         string calldata _receiver
     ) external payable override {
+        requireModeNormal();
         address sender = msg.sender;
         if (sender == IBMCManagement(bmcManagement).getFeeHandler()) {
             sender = address(this);
@@ -495,5 +504,19 @@ contract BMCPeriphery is IBMCPeriphery, ICCPeriphery, Initializable {
         string[] memory
     ) {
         return IBMCManagement(bmcManagement).getLinks();
+    }
+
+    function setMode(
+        int256 _mode
+    ) external override {
+        requireBMCManagementAccess();
+        mode = _mode;
+    }
+
+    function getMode(
+    ) external view override returns (
+        int256
+    ){
+        return mode;
     }
 }
