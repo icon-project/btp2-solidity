@@ -194,4 +194,8 @@ public class OwnershipTest implements BMCIntegrationTest {
         assertUnauthorized(() -> bmcManagementWithTester.setBMCPeriphery(address).send());
     }
 
+    @Test
+    void setModeShouldRevertUnauthorized() {
+        assertUnauthorized(() -> bmcManagementWithTester.setMode(bigInteger).send());
+    }
 }

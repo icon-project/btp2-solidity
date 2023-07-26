@@ -616,8 +616,13 @@ contract BMCManagement is IBMCManagement, IOwnerManager, ICCManagement, Initiali
         string memory _reachable
     ) external override {
         require(msg.sender == bmcService, Errors.BMC_REVERT_UNAUTHORIZED);
-        linkMap[routeInfoMap[_from].next].reachable.push(_reachable);
-        _addRouteInfo(_reachable.networkAddress(), routeInfoMap[_from].next, Types.ROUTE_TYPE_REACHABLE);
+        string memory next = routeInfoMap[_from].next;
+        require(bytes(next).length > 0, Errors.BMC_REVERT_NOT_EXISTS_LINK);
+        if (linkMap[next].reachable.containsFromStrings(_reachable)) {
+            return;
+        }
+        linkMap[next].reachable.push(_reachable);
+        _addRouteInfo(_reachable.networkAddress(), next, Types.ROUTE_TYPE_REACHABLE);
     }
 
     function removeReachable(
@@ -625,8 +630,12 @@ contract BMCManagement is IBMCManagement, IOwnerManager, ICCManagement, Initiali
         string memory _reachable
     ) external override {
         require(msg.sender == bmcService, Errors.BMC_REVERT_UNAUTHORIZED);
-        linkMap[routeInfoMap[_from].next].reachable.removeFromStrings(_reachable);
-        _removeRouteInfo(_reachable.networkAddress(), true, routeInfoMap[_from].next);
+        string memory next = routeInfoMap[_from].next;
+        require(bytes(next).length > 0, Errors.BMC_REVERT_NOT_EXISTS_LINK);
+        if (!linkMap[next].reachable.removeFromStrings(_reachable)) {
+            return;
+        }
+        _removeRouteInfo(_reachable.networkAddress(), true, next);
     }
 
     function getHop(
@@ -635,5 +644,19 @@ contract BMCManagement is IBMCManagement, IOwnerManager, ICCManagement, Initiali
         uint256
     ) {
         return feeMap[_dst].length/2;
+    }
+
+    function setMode(
+        int256 _mode
+    ) external override {
+        requireOwnerAccess();
+        ICCPeriphery(bmcPeriphery).setMode(_mode);
+    }
+
+    function getMode(
+    ) external view override returns (
+        int256
+    ){
+        return ICCPeriphery(bmcPeriphery).getMode();
     }
 }

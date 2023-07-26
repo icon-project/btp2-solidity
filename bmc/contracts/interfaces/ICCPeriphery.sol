@@ -27,4 +27,13 @@ interface ICCPeriphery {
         int256 _nsn,
         uint256 _result
     ) external;
+
+    function setMode(
+        int256 _mode
+    ) external;
+
+    function getMode(
+    ) external view returns (
+        int256
+    );
 }

@@ -26,6 +26,7 @@ import org.web3j.crypto.Hash;
 import org.web3j.protocol.core.methods.response.BaseEventResponse;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
@@ -202,4 +203,7 @@ public interface BMCIntegrationTest extends BTPIntegrationTest {
             throw new RuntimeException(e);
         }
     }
+
+    BigInteger MODE_NORMAL = BigInteger.ZERO;
+    BigInteger MODE_MAINTENANCE = BigInteger.ONE;
 }
