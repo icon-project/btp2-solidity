@@ -103,8 +103,8 @@ contract BtpMessageVerifierV2 is IBMV {
                 (Header memory header, Proof memory proof) = rms[i].toBlockUpdate();
 
                 require(networkId == header.networkId, string.concat(Errors.ERR_UNKNOWN, ":InvalidNID"));
-                require(_db.networkSectionHash == header.prevNetworkSectionHash, string.concat(Errors.ERR_UNKNOWN, ":InvalidNSH"));
                 checkMessageSn(_db.nextMessageSn, header.messageSn);
+                require(_db.networkSectionHash == header.prevNetworkSectionHash, string.concat(Errors.ERR_UNKNOWN, ":InvalidNSH"));
                 checkBlockProof(header, proof, _db.validators);
 
                 _db.height = header.mainHeight;
@@ -113,8 +113,6 @@ contract BtpMessageVerifierV2 is IBMV {
                     _db.validators = header.nextValidators;
                 }
                 if (header.messageRoot != bytes32(0)) {
-                    uint256 messageSn = _db.firstMessageSn + _db.messageCount;
-                    checkMessageSn(messageSn, header.messageSn);
                     _db.messageRoot = header.messageRoot;
                     _db.firstMessageSn = header.messageSn;
                     remainMessageCount = _db.messageCount = header.messageCount;
