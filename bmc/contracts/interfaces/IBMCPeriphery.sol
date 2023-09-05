@@ -166,5 +166,5 @@ interface IBMCPeriphery {
         @param _prev  String ( BTP Address of the previous BMC )
         @param _count Integer ( number of the processed BTP message )
      */
-    event RelayMessage(string indexed _prev, uint256 _count);
+    event RelayMessage(string _prev, uint256 _count);
 }

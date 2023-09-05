@@ -163,7 +163,7 @@ public class MessageTest implements BMCIntegrationTest {
             final BTPAddress prev, final int count) {
         return BMCIntegrationTest.relayMessageEvent(
                 (el) -> {
-                    assertArrayEquals(EVMIntegrationTest.stringToTopic(prev.toString()), el._prev);
+                    assertEquals(prev.toString(), el._prev);
                     assertEquals(BigInteger.valueOf(count), el._count);
                 });
     }
