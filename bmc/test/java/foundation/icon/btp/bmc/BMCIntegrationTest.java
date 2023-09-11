@@ -188,6 +188,12 @@ public interface BMCIntegrationTest extends BTPIntegrationTest {
                 consumer);
     }
 
+    static Consumer<TransactionReceipt> relayMessageEvent(
+            Consumer<BMCPeriphery.RelayMessageEventResponse> consumer) {
+        return eventLogChecker(
+                BMCPeriphery::getRelayMessageEvents,
+                consumer);
+    }
 
     static BMCStatus getStatus(String link) {
         try {

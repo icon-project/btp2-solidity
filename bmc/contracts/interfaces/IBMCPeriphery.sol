@@ -159,4 +159,12 @@ interface IBMCPeriphery {
     ) external view returns (
         int256
     );
+
+    /**
+        @notice (EventLog) Logs the event that handle the relay message
+        @dev The tracker monitors this event.
+        @param _prev  String ( BTP Address of the previous BMC )
+        @param _count Integer ( number of the processed BTP message )
+     */
+    event RelayMessage(string _prev, uint256 _count);
 }

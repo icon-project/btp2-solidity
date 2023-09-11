@@ -101,6 +101,7 @@ contract BMCPeriphery is IBMCPeriphery, ICCPeriphery, Initializable {
         }
 
         require(ICCManagement(bmcManagement).isLinkRelay(_prev, msg.sender), Errors.BMC_REVERT_UNAUTHORIZED);
+        emit RelayMessage(_prev, serializedMsgs.length);
         // dispatch BTP Messages
         Types.BTPMessage memory btpMsg;
         for (uint256 i = 0; i < serializedMsgs.length; i++) {
