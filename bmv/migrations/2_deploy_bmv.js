@@ -24,6 +24,7 @@ module.exports = async function (deployer, network, accounts) {
         SRC_NETWORK_ID,
         NETWORK_TYPE_ID,
         FIRST_BLOCK_UPDATE,
-        SEQUENCE_OFFSET
+        SEQUENCE_OFFSET,
+        0
     );
 };
