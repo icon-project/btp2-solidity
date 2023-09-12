@@ -48,7 +48,7 @@ library BlockUpdateLib {
             l[6].payloadLen() > 0 ? bytes32(l[6].toBytes()) : bytes32(0),
             l[7].toUint(),
             l[8].payloadLen() > 0 ? bytes32(l[8].toBytes()) : bytes32(0),
-            l[5].toUint() & 1 == 1 ? decodeValidators(l[9].toBytes()) : new address[](0)
+            l[9].payloadLen() > 0 ? decodeValidators(l[9].toBytes()) : new address[](0)
         );
 
         if (header.nextValidators.length > 0) {
