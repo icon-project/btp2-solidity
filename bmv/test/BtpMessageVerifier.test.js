@@ -30,7 +30,7 @@ contract('BtpMessageVerifier', (accounts) => {
             const FIRST_BLOCK_UPDATE = '0xf8a40a00a07335dc4b60092f2d5aa4b419bf4ea1fe7e76b6a74f7177a26b20733a20d75081c00201f80001a041791102999c339c844880b23950704cc43aa840f3739e365323cda4dfa89e7ab858f856f8549435343874344652abe559b226f00abec23a98a7a594cfb89e639a3b69704631cadae3517165fbf06e1e944fe6e85b23709cbf74e98f81d5869e2b46b9721f94ccefbb67c172b02e70b699884b76e39806eefe00';
 
             beforeEach(async () => {
-                this.instance = await BtpMessageVerifier.new(BMC, SRC_NETWORK_ID, NETWORK_TYPE_ID, FIRST_BLOCK_UPDATE, SEQUENCE_OFFSET);
+                this.instance = await BtpMessageVerifier.new(BMC, SRC_NETWORK_ID, NETWORK_TYPE_ID, FIRST_BLOCK_UPDATE, SEQUENCE_OFFSET, 0);
             });
 
             describe('sends RelayMessage=[MessageProof]', () => {
@@ -128,7 +128,7 @@ contract('BtpMessageVerifier', (accounts) => {
 
         beforeEach(async () => {
             const FIRST_BLOCK_UPDATE = '0xf8850a01a07335dc4b60092f2d5aa4b419bf4ea1fe7e76b6a74f7177a26b20733a20d75081c00101f80000f800b858f856f8549435343874344652abe559b226f00abec23a98a7a594cfb89e639a3b69704631cadae3517165fbf06e1e944fe6e85b23709cbf74e98f81d5869e2b46b9721f94ccefbb67c172b02e70b699884b76e39806eefe00';
-            this.instance = await BtpMessageVerifier.new(BMC, SRC_NETWORK_ID, 1, FIRST_BLOCK_UPDATE, SEQUENCE_OFFSET);
+            this.instance = await BtpMessageVerifier.new(BMC, SRC_NETWORK_ID, 1, FIRST_BLOCK_UPDATE, SEQUENCE_OFFSET, 0);
         });
 
         describe('when send RELAY_MESSAGE = [BlockUpdate, MessageProof]', () => {
@@ -402,7 +402,7 @@ contract('BtpMessageVerifier', (accounts) => {
         ];
 
         beforeEach(async () => {
-            this.instance = await BtpMessageVerifier.new(BMC, SRC_NETWORK_ID, NETWORK_TYPE_ID, FIRST_BLOCK_UPDATE, SEQUENCE_OFFSET);
+            this.instance = await BtpMessageVerifier.new(BMC, SRC_NETWORK_ID, NETWORK_TYPE_ID, FIRST_BLOCK_UPDATE, SEQUENCE_OFFSET, 0);
         });
 
         describe('when miss RELAY_MESSAGE = [MessageProof], and send RELAY_MESSAGE = [BlockUpdate]', () => {
@@ -461,6 +461,27 @@ contract('BtpMessageVerifier', (accounts) => {
             });
         });
     });
+
+    describe('deploy with intermediate block header', () => {
+        const SRC_NETWORK_ID = '0x1.icon'
+        const VALIDATORS = [
+            '0x14cC53a31B003232512Ea3c03C57f8EA35f1eDbF',
+            '0xB29b239a2BbF5a9507EBb71106C9cA9D0b519Be8',
+            '0xFFF26dBCD6d0Db8Ee81F1DEE3B2200d6F3430Bb1',
+            '0x09E75e3075bc1Bf9C9Dcf3F281D7c73544dD3c2D'
+        ];
+        const FIRST_BLOCK_UPDATE = '0xf8c7840084e27800a0ad580fcaaa2d13c3685dd75ab459acb795d5a507058dd8a5eb94c42033761f32c06a06a021170787b9e47f08040209617d46a8b8506c92c8d2e3a2144c250a41d5e22dd201a0284056656da32bd9ad313d2b6e1f889f092d851d35e0fafa81ce24ca5467c6bfb858f856f8549414cc53a31b003232512ea3c03c57f8ea35f1edbf94b29b239a2bbf5a9507ebb71106c9ca9d0b519be894fff26dbcd6d0db8ee81f1dee3b2200d6f3430bb19409e75e3075bc1bf9c9dcf3f281d7c73544dd3c2d';
+
+        beforeEach(async () => {
+            this.instance = await BtpMessageVerifier.new(BMC, SRC_NETWORK_ID, 1, FIRST_BLOCK_UPDATE, SEQUENCE_OFFSET, 0);
+        });
+
+        describe('when installed: UpdateValidatorFlag=false, Contains Validators set', () => {
+          shouldHaveThisState.call(this, {
+            validators: VALIDATORS
+          });
+        });
+    });
 });
 
 function shouldHaveImmutableState(props) {
@@ -476,44 +497,50 @@ function shouldHaveImmutableState(props) {
 }
 
 function shouldHaveThisState(props) {
-    it('has block height', async () => {
-        expect(await this.instance.getHeight())
-            .to.be.bignumber.equal(props.height);
-    });
+    if (props.height != undefined) {
+        it('has network section hash', async () => {
+            expect(await this.instance.getNetworkSectionHash())
+                .to.equal(props.networkSectionHash);
+        });
+    }
 
-    it('has network section hash', async () => {
-        expect(await this.instance.getNetworkSectionHash())
-            .to.equal(props.networkSectionHash);
-    });
+    if (props.messageRoot != undefined) {
+        it('has message root', async () => {
+            expect(await this.instance.getMessageRoot())
+                .to.equal(props.messageRoot);
+        });
+    }
 
-    it('has message root', async () => {
-        expect(await this.instance.getMessageRoot())
-            .to.equal(props.messageRoot);
-    });
+    if (props.messageCount != undefined) {
+        it('has message count', async () => {
+            expect(await this.instance.getMessageCount())
+                .to.be.bignumber.equal(props.messageCount);
+        });
+    }
 
-    it('has message count', async () => {
-        expect(await this.instance.getMessageCount())
-            .to.be.bignumber.equal(props.messageCount);
-    });
+    if (props.remainMessageCount != undefined) {
+        it('has remain message count', async () => {
+            expect(await this.instance.getRemainMessageCount())
+                .to.be.bignumber.equal(props.remainMessageCount);
+        });
+    }
 
-    it('has remain message count', async () => {
-        expect(await this.instance.getRemainMessageCount())
-            .to.be.bignumber.equal(props.remainMessageCount);
-    });
+    if (props.messageSn != undefined) {
+        it('has next message sequence number', async () => {
+            expect(await this.instance.getNextMessageSn())
+                .to.be.bignumber.equal(props.messageSn);
+        });
+    }
 
+    if (props.validators != undefined) {
+        it('has validators', async () => {
+            expect(await this.instance.getValidatorsCount())
+                .to.be.bignumber.equal(new BN(props.validators.length));
 
-    it('has next message sequence number', async () => {
-        expect(await this.instance.getNextMessageSn())
-            .to.be.bignumber.equal(props.messageSn);
-    });
-
-    it('has validators', async () => {
-        expect(await this.instance.getValidatorsCount())
-            .to.be.bignumber.equal(new BN(props.validators.length));
-
-        for (nth in props.validators) {
-            expect((await this.instance.getValidators(nth)).toLowerCase())
-                .to.equal(props.validators[nth]);
-        }
-    });
+            for (nth in props.validators) {
+                expect((await this.instance.getValidators(nth)).toLowerCase())
+                    .to.equal(props.validators[nth].toLowerCase());
+            }
+        });
+    }
 }

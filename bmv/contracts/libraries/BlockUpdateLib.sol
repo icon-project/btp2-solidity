@@ -37,20 +37,24 @@ library BlockUpdateLib {
         RLPDecode.RLPItem memory i = enc.toRlpItem();
         RLPDecode.RLPItem[] memory l = i.toList();
 
-        return
-            Header(
-                l[0].toUint(),
-                l[1].toUint(),
-                bytes32(l[2].toBytes()),
-                l[3].payloadLen() > 0 ? decodeNSRootPath(l[3].toRlpBytes()) : new Path[](0),
-                l[4].toUint(),
-                l[5].toUint() >> 1,
-                l[5].toUint() & 1 == 1,
-                l[6].payloadLen() > 0 ? bytes32(l[6].toBytes()) : bytes32(0),
-                l[7].toUint(),
-                l[8].payloadLen() > 0 ? bytes32(l[8].toBytes()) : bytes32(0),
-                l[5].toUint() & 1 == 1 ? decodeValidators(l[9].toBytes()) : new address[](0)
-            );
+        header = Header(
+            l[0].toUint(),
+            l[1].toUint(),
+            bytes32(l[2].toBytes()),
+            l[3].payloadLen() > 0 ? decodeNSRootPath(l[3].toRlpBytes()) : new Path[](0),
+            l[4].toUint(),
+            l[5].toUint() >> 1,
+            l[5].toUint() & 1 == 1,
+            l[6].payloadLen() > 0 ? bytes32(l[6].toBytes()) : bytes32(0),
+            l[7].toUint(),
+            l[8].payloadLen() > 0 ? bytes32(l[8].toBytes()) : bytes32(0),
+            l[9].payloadLen() > 0 ? decodeValidators(l[9].toBytes()) : new address[](0)
+        );
+
+        if (header.nextValidators.length > 0) {
+            require(header.nextProofContextHash == calcProofContextHash(header.nextValidators),
+                    "Inconsistent next proof context hashes");
+        }
     }
 
     function decodeProof(bytes memory enc) internal pure returns (Proof memory) {
@@ -126,5 +130,13 @@ library BlockUpdateLib {
             validators[i] = tl[i].toAddress();
         }
         return validators;
+    }
+
+    function calcProofContextHash(address[] memory validators) private pure returns (bytes32) {
+        bytes[] memory buf = new bytes[](validators.length);
+        for (uint256 i = 0; i < validators.length; i++) {
+            buf[i] = RLPEncode.encodeAddress(validators[i]);
+        }
+        return keccak256(RLPEncode.encodeList(RLPEncode.encodeList(buf)));
     }
 }

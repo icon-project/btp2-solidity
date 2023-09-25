@@ -51,7 +51,8 @@ contract BtpMessageVerifier is IBMV {
         string memory _srcNetworkId,
         uint256 _networkTypeId,
         bytes memory _firstBlockHeader,
-        uint256 _sequenceOffset
+        uint256 _sequenceOffset,
+        uint256 _nextMessageOffset
     ) {
         bmc = _bmc;
         srcNetworkId = _srcNetworkId;
@@ -68,7 +69,7 @@ contract BtpMessageVerifier is IBMV {
             header.mainHeight,
             header.messageCount,
             header.messageSn,
-            header.messageSn,
+            header.messageSn + _nextMessageOffset,
             header.nextValidators
         );
     }
