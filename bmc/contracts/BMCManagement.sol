@@ -440,6 +440,7 @@ contract BMCManagement is IBMCManagement, IOwnerManager, ICCManagement, Initiali
                 _removeFee(_dst[i]);
             }
         }
+        emit SetFeeTable(_dst, _value);
     }
 
     function getFeeTable(

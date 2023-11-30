@@ -233,4 +233,12 @@ interface IBMCManagement {
     ) external view returns (
         int256
     );
+
+    /**
+        @notice (EventLog) Logs the event that handle the fee table
+        @dev The tracker monitors this event.
+        @param _dst   String[] ( List of BTP Network Address of the destination BMC )
+        @param _value Integer[][] ( List of lists of relay fees in the path including return path )
+     */
+    event SetFeeTable(string[] _dst, uint256[][] _value);
 }
